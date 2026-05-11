@@ -2,42 +2,30 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\TransaksiDetail;
 
-class Produk extends Model
+class produk extends Model
 {
-    use HasFactory;
-
     protected $table = 'produk';
-
+    
     protected $fillable = [
+        'id_kategori',
+        'kode_produk',
         'nama',
-        'harga',
+        'harga_beli',
+        'harga_jual',
         'stok',
+        'stok_minimum',
+        'status',
     ];
-
-    protected $casts = [
-        'harga' => 'integer',
-        'stok'  => 'integer',
-    ];
-
-    // Relasi ke transaksi_detail
-    public function transaksiDetail()
+    
+    public function kategori()
     {
-        return $this->hasMany(TransaksiDetail::class, 'produk_id');
+        return $this->belongsTo(Kategori::class, 'id_kategori');
     }
-
-    // Scope: stok rendah (≤ 5)
-    public function scopeStokRendah($query, int $threshold = 5)
+    
+    public function transaksiDetails()
     {
-        return $query->where('stok', '<=', $threshold);
-    }
-
-    // Scope: stok habis
-    public function scopeStokHabis($query)
-    {
-        return $query->where('stok', 0);
+        return $this->hasMany(TransaksiDetail::class);
     }
 }
